@@ -24,7 +24,7 @@ end
 
 core.register_on_mods_loaded(function()
     local content = nil
-    local f = io.open(read_file(worldpath..data_leaderboard), "r")
+    local f = io.open(worldpath..data_leaderboard, "r")
     if f then
         content = f:read("*all")
         f:close()
