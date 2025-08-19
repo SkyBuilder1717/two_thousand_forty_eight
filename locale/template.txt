@@ -11,3 +11,4 @@ Leaderboard=
 Total score: @1=
 You've won!=
 No moves left! You lose!=
+(No entries)=

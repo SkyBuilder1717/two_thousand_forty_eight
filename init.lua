@@ -314,6 +314,9 @@ core.register_chatcommand("2048", {
             two_thousand_forty_eight.start_game(name)
         elseif param == "leaderboard" then
             core.chat_send_player(name, "2048: "..S("Leaderboard"))
+            if #two_thousand_forty_eight.leaderboard < 1 then
+                return true, S("(No entries)")
+            end
             for i, entry in ipairs(two_thousand_forty_eight.leaderboard) do
                 core.chat_send_player(name, S("@1. @2 - @3", i, entry.name, entry.score))
             end
