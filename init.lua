@@ -11,22 +11,6 @@ two_thousand_forty_eight = {
 local worldpath = core.get_worldpath().."/"
 local data_leaderboard = "two_thousand_forty_eight"
 
-local function write_file(path, content)
-    local f = io.open(path, "w")
-    f:write(content)
-    f:close()
-end
-
-local function read_file(path)
-    local f = io.open(path, "r")
-    if not f then
-        return nil
-    end
-    local txt = f:read("*all")
-    f:close()
-    return txt
-end
-
 local function xor_crypt(data)
     local res = {}
     local klen = #key
@@ -38,28 +22,19 @@ local function xor_crypt(data)
     return table.concat(res)
 end
 
-function two_thousand_forty_eight.save_leaderboard()
-    local tbl = two_thousand_forty_eight.leaderboard
-    local raw = core.serialize(core.encode_base64(core.write_json(tbl)))
-    local encrypted = xor_crypt(raw)
-    local path = worldpath..data_leaderboard
-    write_file(path, encrypted)
-end
-
-function two_thousand_forty_eight.load_leaderboard()
-    local content = read_file(worldpath..data_leaderboard)
-    if not content then return false end
-    local decrypted = xor_crypt(content)
-    local ok, decoded = pcall(function()
-        return core.parse_json(core.decode_base64(core.deserialize(decrypted)))
-    end)
-    local tbl = (ok and decoded) or {}
-    two_thousand_forty_eight.leaderboard = tbl
-    return true
-end
-
 core.register_on_mods_loaded(function()
-    two_thousand_forty_eight.load_leaderboard()
+    local content = nil
+    local f = io.open(read_file(worldpath..data_leaderboard), "r")
+    if f then
+        content = f:read("*all")
+        f:close()
+    end
+    if not content then return false end
+    local ok, decoded = pcall(function()
+        return core.parse_json(core.decode_base64(core.deserialize(xor_crypt(content))))
+    end)
+    two_thousand_forty_eight.leaderboard = (ok and decoded) or {}
+    return true
 end)
 
 local function add_to_leaderboard(name, score)
@@ -86,7 +61,10 @@ local function add_to_leaderboard(name, score)
         table.remove(two_thousand_forty_eight.leaderboard)
     end
 
-    two_thousand_forty_eight.save_leaderboard()
+    local encrypted = xor_crypt(core.serialize(core.encode_base64(core.write_json(two_thousand_forty_eight.leaderboard))))
+    local f = io.open(worldpath..data_leaderboard, "w")
+    f:write(encrypted)
+    f:close()
 end
 
 local function new_board()
@@ -251,7 +229,6 @@ local function move(board, dir)
     return moved, gained
 end
 
-
 local function check_win(board)
     for y = 1, 4 do
         for x = 1, 4 do
@@ -285,7 +262,6 @@ local function check_game_over(board)
 
     return true
 end
-
 
 core.register_on_player_receive_fields(function(player, formname, fields)
     if formname ~= "two_thousand_forty_eight:game" then return end
@@ -330,7 +306,6 @@ core.register_on_player_receive_fields(function(player, formname, fields)
 
     core.show_formspec(name, "two_thousand_forty_eight:game", board_to_formspec(board, state.score))
 end)
-
 
 core.register_chatcommand("2048", {
     params = "[<leaderboard>]",

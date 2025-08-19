@@ -1,0 +1,13 @@
+# textdomain: two_thousand_forty_eight
+
+# CDB
+Adds simple 2048 game=
+
+# UI
+Score: @1=
+
+# Chat
+Leaderboard=
+Total score: @1=
+You've won!=
+No moves left! You lose!=

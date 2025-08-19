@@ -1,7 +1,13 @@
 # textdomain: two_thousand_forty_eight
 
+# CDB
+Adds simple 2048 game=Добавляет простую игру про 2048
+
+# UI
+Score: @1=Счёт: @1
+
+# Chat
 Leaderboard=Таблица лидеров
 Total score: @1=Счёт: @1
 You've won!=Ты выйграл!
 No moves left! You lose!=Не осталось ходов! Ты проиграл!
-Score: @1=Счёт: @1
